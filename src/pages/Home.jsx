@@ -19,8 +19,7 @@ export const Home = () => {
 
     if (
       !formState.name ||
-      !formState.lastname ||
-      !formState.email
+      !formState.lastname
     ) {
         alert('Se requiere completar todos los datos')
         return;
@@ -34,7 +33,6 @@ export const Home = () => {
       const res = await client.from('personas').insert({
         name: formState.name,
         lastname: formState.lastname,
-        email: formState.email,
         phone: formState.interested || formState.phone,
         adventist: getAdventist(adventist),
         church: churchs[formState.church]?.label || null,
@@ -63,7 +61,6 @@ export const Home = () => {
     if (
       !formState.name ||
       !formState.lastname ||
-      !formState.email ||
       !formState.phone || 
       !churchs[formState.church]?.label
     ) {
@@ -80,7 +77,6 @@ export const Home = () => {
       const res = await client.from('personas').insert({
         name: formState.name,
         lastname: formState.lastname,
-        email: formState.email,
         phone: formState.phone,
         adventist: getAdventist(adventist),
         church: churchs[formState.church]?.label || null,
@@ -106,7 +102,6 @@ export const Home = () => {
     console.log({
       nombre: formState.name,
       apellido: formState.lastname,
-      correo: formState.email,
       celular: formState.phone,
       iglesia: churchs[formState.church]?.label,
       voz: formState.voice && voices[formState.voice]?.label || null, 
@@ -165,16 +160,6 @@ export const Home = () => {
                         label="Apellido"
                         onChange={onInputChange} 
                         name="lastname" 
-                        color="primary" />
-                    </div>
-                    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                        <Input 
-                        type="text" 
-                        variant="underlined"
-                        className="mt-2"
-                        label="Correo"
-                        onChange={onInputChange} 
-                        name="email" 
                         color="primary" />
                     </div>
 
@@ -237,16 +222,6 @@ export const Home = () => {
                           label="Apellido"
                           onChange={onInputChange} 
                           name="lastname" 
-                          color="primary" />
-                      </div>
-                      <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                          <Input 
-                          type="text" 
-                          variant="underlined"
-                          className="mt-2"
-                          label="Correo"
-                          onChange={onInputChange} 
-                          name="email" 
                           color="primary" />
                       </div>
                       <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
