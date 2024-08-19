@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+main {
+    font-family: "Acme", sans-serif;
+}
+
+.text-red {
+    color: red;
+}
+.bg-home, .bg-notes {
+    background-size: cover;
+}
