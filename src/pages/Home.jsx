@@ -122,7 +122,7 @@ export const Home = () => {
     <>
         <main className="p-0 md:p-10 h-screen flex md:justify-end bg-home">
           <section className="flex flex-col items-center justify-center p-10 rounded-none md:rounded-xl md:max-w-xl w-full bg-notes md:bg-none md:bg-white">
-            <img src="./public/images/logo.webp" alt="Música en Familia 2024" className="max-w-40" />
+            <img src="/images/logo.webp" alt="Música en Familia 2024" className="max-w-40" />
             <div className="text text-center mt-8">
               <span className="text-xl block">¿Quieres ser parte de la gran experiencia del</span>
               <span className="text-4xl block text-red font-bold my-2">Música en Familia</span>

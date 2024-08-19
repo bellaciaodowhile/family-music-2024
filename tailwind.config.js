@@ -10,8 +10,8 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'notes': "url('./public/images/notes.webp')",
-        'home': "url('./public/images/home.webp')",
+        'notes': "url('/images/notes.webp')",
+        'home': "url('/images/home.webp')",
       }
     },
     
