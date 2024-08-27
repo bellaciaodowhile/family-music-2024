@@ -119,9 +119,9 @@ export const Home = () => {
           <section className="flex flex-col items-center justify-center p-10 rounded-none md:rounded-xl md:max-w-xl w-full bg-notes md:bg-none md:bg-white">
             <img src="/images/logo.webp" alt="Música en Familia 2024" className="max-w-40" />
             <div className="text text-center mt-8">
-              <span className="text-xl block">¿Quieres ser parte de la gran experiencia del</span>
+              <span className="text-xl block text-black">¿Quieres ser parte de la gran experiencia del</span>
               <span className="text-4xl block text-red font-bold my-2">Música en Familia</span>
-              <span className="text-7xl block font-extrabold">2024?</span>
+              <span className="text-7xl block font-extrabold text-black">2024?</span>
             </div>
             <div className="flex gap-5 mt-8">
               <Button onPress={onOpen} radius="full" className='bg-red-500 text-white text-lg p-7' variant="shadow">

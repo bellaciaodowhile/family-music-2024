@@ -11,3 +11,7 @@ main {
 .bg-home, .bg-notes {
     background-size: cover;
 }
+.bg-main {
+    font-family: "DM Sans", sans-serif;
+    background: radial-gradient(circle at -53% 52%, #1b084a 0%, #080516 78%, #1b084a 431%);
+}

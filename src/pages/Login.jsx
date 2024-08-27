@@ -4,7 +4,7 @@ import { Input } from "@nextui-org/react";
 import { useForm } from "../hooks/useForm";
 import { client } from "../supabase/client";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { EyeFilledIcon } from "../components/EyeFilledIcon";
 import { EyeSlashFilledIcon } from "../components/EyeSlashFilledIcon";
 
@@ -20,6 +20,7 @@ export const Login = () => {
     }, [navigate])
 
     const [isVisible, setIsVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false)
     const toggleVisibility = () => setIsVisible(!isVisible);
 
     const { formState, onInputChange, setFormState } = useForm({});
@@ -27,10 +28,15 @@ export const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await client.auth.signInWithPassword({
+            const { data, error } = await client.auth.signInWithPassword({
                 email: formState.user,
-                password: formState.password,
+                password: formState.password
             })
+            setIsLoading(true)
+            if (!data.user)  {
+                alert('Verifique, ha ingresado algún dato incorrecto.')
+                setIsLoading(false)
+            } 
         } catch (error) {
             console.log(error)
         }
@@ -77,11 +83,16 @@ export const Login = () => {
                             />
                         </div>
 
-                        <Button type="submit" radius="sm" className="w-full mt-10 text-white font-bold bg-blue-500">
-                            Entrar
+                        <Button type="submit" radius="sm" className="w-full mt-10 text-white font-bold bg-blue-500" isLoading={isLoading}>
+                            { isLoading ? 'Entrando' : 'Entrar' }
                         </Button>  
                         
                     </form>
+                    <Button radius="sm" className="w-full mt-5 text-blue-500 font-bold bg-white">
+                        <NavLink>
+                            Inicio
+                        </NavLink> 
+                    </Button>
                 </div>
 
             </div>
