@@ -1,7 +1,7 @@
 import { Chip, Button, CardBody, Card, CardHeader, Tab, Tabs, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Select, SelectItem } from "@nextui-org/react";
 import { client } from "../supabase/client";
 import { useEffect, useInsertionEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Navigation } from "../components/Navigation";
 import { getData } from "../helpers/getData";
 import { capitalizeString } from "../helpers/helpers";
@@ -78,7 +78,12 @@ export const Dashboard = () => {
     <>
        <div className="bg-main min-h-screen">
           <div className="px-5 md:px-32 pt-10">
-          <Tabs className="bg-none" color="primary" fullWidth>
+          <Link 
+          to={ '/' }
+          className="text-white ">
+            { '< Volver al inicio' }
+          </Link>
+          <Tabs className="bg-none mt-10" color="primary" fullWidth>
             <Tab title={`${(assistantsAdventist?.length + assistantsNotAdventist?.length)} - Asistentes`}>
               <Tabs 
                 fullWidth 
