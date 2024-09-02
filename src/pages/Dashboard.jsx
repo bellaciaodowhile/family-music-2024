@@ -86,7 +86,7 @@ export const Dashboard = () => {
               >
                 <Tab title={`${assistantsAdventist?.length } - Adventistas`}>
                   {
-                    assistantsAdventist.length > 0 ?
+                    assistantsAdventist?.length > 0 ?
                       assistantsAdventist.map((item, index) => {
                         return (
                           <Card className="py-4 mt-5" key={index}>
@@ -159,7 +159,7 @@ export const Dashboard = () => {
                     </TableBody>
                   </Table> */}
                   {
-                    assistantsAdventist.length > 0 ?
+                    assistantsAdventist?.length > 0 ?
                       assistantsNotAdventist.map((item, index) => {
                         return (
                           <Card className="py-4 mt-5" key={index}>
@@ -220,7 +220,7 @@ export const Dashboard = () => {
 
 
                     {
-                      instruments.length > 0 ?
+                      instruments?.length > 0 ?
                         instruments.map((item, index) => {
                           return (
                             <Card className="py-4 mt-5" key={index}>
@@ -305,7 +305,7 @@ export const Dashboard = () => {
                     </Table> */}
 
                     {
-                      arrVoices.length > 0 ?
+                      arrVoices?.length > 0 ?
                         arrVoices.map((item, index) => {
                           return (
                             <Card className="py-4 mt-5" key={index}>
