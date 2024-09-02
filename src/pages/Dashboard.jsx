@@ -1,4 +1,4 @@
-import { Chip, Button, CardBody, Card, Tab, Tabs, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Select, SelectItem } from "@nextui-org/react";
+import { Chip, Button, CardBody, Card, CardHeader, Tab, Tabs, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Select, SelectItem } from "@nextui-org/react";
 import { client } from "../supabase/client";
 import { useEffect, useInsertionEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { Navigation } from "../components/Navigation";
 import { getData } from "../helpers/getData";
 import { capitalizeString } from "../helpers/helpers";
 import { voices } from "../helpers/data";
+import toast, { Toaster } from 'react-hot-toast';
 
 
 export const Dashboard = () => {
@@ -63,13 +64,18 @@ export const Dashboard = () => {
     }
   }
 
- 
-
-  
+  const copyClipboard = (number) => {
+    console.log(`Copiando número: ${ number }`)
+    navigator.clipboard.writeText(number)
+    .then(() => {
+      toast.success(`Número copiado: ${number}`)
+    }), function(err) {
+      console.error(`Error al copiar: ${ err }`)
+    }
+  }
 
   return (
     <>
-
        <div className="bg-main min-h-screen">
           <div className="px-5 md:px-32 pt-10">
           <Tabs className="bg-none" color="primary" fullWidth>
@@ -79,7 +85,23 @@ export const Dashboard = () => {
                 color="primary"
               >
                 <Tab title={`${assistantsAdventist?.length } - Adventistas`}>
-                  <Table color="primary" aria-label="Example static collection table">
+                  {
+                    assistantsAdventist.length > 0 ?
+                      assistantsAdventist.map((item, index) => {
+                        return (
+                          <Card className="py-4 mt-5" key={index}>
+                            <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+                              <p className="text-tiny uppercase font-bold">Iglesia</p>
+                              <small className="text-default-500">{ item.church }</small>
+                              <h4 className="font-bold text-large">{ capitalizeString(item.name) } { capitalizeString(item.lastname)}</h4>
+                            </CardHeader>
+                          </Card>
+                        )
+                      })
+                    : 'No hay registros en esta sección'
+                  }
+
+                  {/* <Table color="primary" aria-label="Example static collection table">
                     <TableHeader>
                       <TableColumn>Nombre y Apellido</TableColumn>
                       <TableColumn>Iglesia</TableColumn>
@@ -96,10 +118,29 @@ export const Dashboard = () => {
                         })
                       }
                     </TableBody>
-                  </Table>
+                  </Table> */}
+
+                      
+
+
+                 
+
+                  {/* <Card className="py-4">
+                    <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+                      <p className="text-tiny uppercase font-bold">Daily Mix</p>
+                      <small className="text-default-500">12 Tracks</small>
+                      <h4 className="font-bold text-large">Frontend Radio</h4>
+                    </CardHeader>
+                    <CardBody className="overflow-visible py-2">
+                     
+                    </CardBody>
+                  </Card> */}
+                 
+
+
                 </Tab>
                 <Tab title={`${assistantsNotAdventist?.length } - No Adventistas`}>
-                  <Table color="primary" aria-label="Example static collection table">
+                  {/* <Table color="primary" aria-label="Example static collection table">
                     <TableHeader>
                       <TableColumn>Nombre y Apellido</TableColumn>
                       <TableColumn>Interesado</TableColumn>
@@ -116,14 +157,29 @@ export const Dashboard = () => {
                         })
                       }
                     </TableBody>
-                  </Table>
+                  </Table> */}
+                  {
+                    assistantsAdventist.length > 0 ?
+                      assistantsNotAdventist.map((item, index) => {
+                        return (
+                          <Card className="py-4 mt-5" key={index}>
+                            <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+                              <p className="text-tiny uppercase font-bold">Interesado</p>
+                              <small className="text-default-500">{ !item.phone ? 'No' : item.phone}</small>
+                              <h4 className="font-bold text-large">{ capitalizeString(item.name) } { capitalizeString(item.lastname)}</h4>
+                            </CardHeader>
+                          </Card>
+                        )
+                      })
+                    : 'No hay registros en esta sección'
+                  }
                 </Tab>
               </Tabs>
             </Tab>
             <Tab title={`${(totalParticipants)} - Participantes`}>
                 <Tabs fullWidth color="primary">
                   <Tab title={`${instruments?.length} - Instrumentos`}>
-                    <Table color="primary" aria-label="Example static collection table">
+                    {/* <Table color="primary" aria-label="Example static collection table">
                       <TableHeader>
                         <TableColumn>Nombre(s) y Apellido(s)</TableColumn>
                         <TableColumn>N° Celular</TableColumn>
@@ -159,7 +215,49 @@ export const Dashboard = () => {
                         }
                       
                       </TableBody>
-                    </Table>
+                    </Table> */}
+
+
+
+                    {
+                      instruments.length > 0 ?
+                        instruments.map((item, index) => {
+                          return (
+                            <Card className="py-4 mt-5" key={index}>
+                              <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+                              <h4 className="font-bold text-large">{ capitalizeString(item.name) } { capitalizeString(item.lastname)}</h4>
+                                <div className="flex gap-5 mt-3">
+                                  <div>
+                                    <p className="text-tiny uppercase font-bold">iglesia</p>
+                                    <small className="text-default-500">{ item.church }</small>
+                                  </div>
+                                  <div>
+                                    <p className="text-tiny uppercase font-bold">instrumento</p>
+                                    <small className="text-default-500">{ item.instrument }</small>
+                                  </div>
+                                </div>
+                                <Dropdown placement="bottom-start" className="dark text-white">
+                                  <DropdownTrigger>
+                                    <Button variant="bordered" className="mt-3">{ item.phone }</Button>
+                                  </DropdownTrigger>
+                                  <DropdownMenu aria-label="Static Actions">
+                                    <DropdownItem key="12" onClick={() => copyClipboard(item.phone)}>Copiar número</DropdownItem>
+                                    <DropdownItem href={`https://wa.me/+58${ item.phone }`} target="_blank" key="123">WhatsApp</DropdownItem>
+                                    <DropdownItem href={`tel:+58${ item.phone }`} target="_blank" key="24">Llamar</DropdownItem>
+                                    <DropdownItem href={`sms:+58${ item.phone }`} target="_blank" key="34">Mensaje de texto</DropdownItem>
+                                  </DropdownMenu>
+                                </Dropdown>
+                              </CardHeader>
+                            </Card>
+                          )
+                        })
+                      : 'No hay registros en esta sección'
+                    }
+
+
+
+
+
                   </Tab>
                   <Tab title={`${arrVoices?.length} - Voces`}>
                     <div className="flex justify-end">
@@ -175,15 +273,14 @@ export const Dashboard = () => {
                       </Dropdown>
                     </div>
 
-                    <Table color="primary" aria-label="Example static collection table" className="mt-3">
+                    {/* <Table color="primary" aria-label="Example static collection table" className="mt-3">
                       <TableHeader>
                         <TableColumn>Nombre(s) y Apellido(s)</TableColumn>
                         <TableColumn>N° Celular</TableColumn>
                         <TableColumn>Iglesia</TableColumn>
                         <TableColumn>Voz</TableColumn>
                       </TableHeader>
-
-                      <TableBody items={arrVoices} emptyContent={'No existen datos registrados en esta sección'}>
+                       <TableBody items={arrVoices} emptyContent={'No existen datos registrados en esta sección'}>
                         {(item) => (
                           <TableRow key={item.key}>
                             <TableCell>{ item.name } { item.lastname }</TableCell>
@@ -204,9 +301,45 @@ export const Dashboard = () => {
                             <TableCell>{ voices[item.voice].label }</TableCell>
                           </TableRow>
                         )}
-                      </TableBody>
+                      </TableBody> 
+                    </Table> */}
 
-                    </Table>
+                    {
+                      arrVoices.length > 0 ?
+                        arrVoices.map((item, index) => {
+                          return (
+                            <Card className="py-4 mt-5" key={index}>
+                              <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+                              <h4 className="font-bold text-large">{ capitalizeString(item.name) } { capitalizeString(item.lastname)}</h4>
+                                <div className="flex gap-5 mt-3">
+                                  <div>
+                                    <p className="text-tiny uppercase font-bold">iglesia</p>
+                                    <small className="text-default-500">{ item.church }</small>
+                                  </div>
+                                  <div>
+                                    <p className="text-tiny uppercase font-bold">voz</p>
+                                    <small className="text-default-500">{ voices[item.voice].label }</small>
+                                  </div>
+                                </div>
+                                <Dropdown placement="bottom-start" className="dark text-white">
+                                  <DropdownTrigger>
+                                    <Button variant="bordered" className="mt-3">{ item.phone }</Button>
+                                  </DropdownTrigger>
+                                  <DropdownMenu aria-label="Static Actions">
+                                    <DropdownItem key="12" onClick={() => copyClipboard(item.phone)}>Copiar número</DropdownItem>
+                                    <DropdownItem href={`https://wa.me/+58${ item.phone }`} target="_blank" key="123">WhatsApp</DropdownItem>
+                                    <DropdownItem href={`tel:+58${ item.phone }`} target="_blank" key="24">Llamar</DropdownItem>
+                                    <DropdownItem href={`sms:+58${ item.phone }`} target="_blank" key="34">Mensaje de texto</DropdownItem>
+                                  </DropdownMenu>
+                                </Dropdown>
+                              </CardHeader>
+                            </Card>
+                          )
+                        })
+                       : 'No hay registros en esta sección'
+                    }
+
+
                   </Tab>
                 </Tabs>
             </Tab>

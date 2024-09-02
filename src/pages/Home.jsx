@@ -3,7 +3,7 @@ import { useForm } from "../hooks/useForm";
 import { churchs, voices } from "../helpers/data";
 import { useState } from "react";
 import { client } from "../supabase/client";
-
+import toast, { Toaster } from 'react-hot-toast';
 
 export const Home = () => {
 
@@ -21,7 +21,7 @@ export const Home = () => {
       !formState.name ||
       !formState.lastname
     ) {
-        alert('Se requiere completar todos los datos')
+        toast.error('Se requiere completar todos los datos')
         return;
     } 
 
@@ -41,7 +41,7 @@ export const Home = () => {
       if (res.status == 409) return alert('El correo ya está registrado')
       if (res.status == 201) {
         onClose()
-        alert('Registro realizado satisfactoriamente')
+        toast.success('Registro realizado satisfactoriamente')
         e.target.reset();
         for (let field of Object.keys(formState)) {
           setFormState({ [field]: '' })
@@ -49,6 +49,7 @@ export const Home = () => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Ha ocurrido un error al registrarse')
     }
 
   }
@@ -64,12 +65,12 @@ export const Home = () => {
       !formState.phone || 
       !churchs[formState.church]?.label
     ) {
-        alert('Se requiere completar todos los datos')
+        toast.error('Se requiere completar todos los datos')
         return;
     } 
 
     if (!formState.voice && !formState.instrument) {
-      alert('Debe registrar un tipo de ejecución')
+      toast.error('Debe registrar un tipo de ejecución')
       return;
     }
 
@@ -88,7 +89,7 @@ export const Home = () => {
       if (res.status == 409) return alert('El correo ya está registrado')
       if (res.status == 201) {
         onClose()
-        alert('Registro realizado satisfactoriamente')
+        toast.success('Registro realizado satisfactoriamente')
         e.target.reset();
         for (let field of Object.keys(formState)) {
           setFormState({ [field]: '' })
@@ -96,6 +97,7 @@ export const Home = () => {
       }
     } catch (error) {
       console.log(error)
+      toast.error('Ha ocurrido un error al registrarse')
     }
 
     console.log('Registrando participantes...')

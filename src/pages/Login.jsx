@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { EyeFilledIcon } from "../components/EyeFilledIcon";
 import { EyeSlashFilledIcon } from "../components/EyeSlashFilledIcon";
-
+import toast, { Toaster } from 'react-hot-toast';
 
 export const Login = () => {
 
@@ -34,7 +34,7 @@ export const Login = () => {
             })
             setIsLoading(true)
             if (!data.user)  {
-                alert('Verifique, ha ingresado algún dato incorrecto.')
+                toast.error(`Verifique, ha ingresado algún dato incorrecto.`)
                 setIsLoading(false)
             } 
         } catch (error) {
