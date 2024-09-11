@@ -230,7 +230,7 @@ export const Dashboard = () => {
                           return (
                             <Card className="py-4 mt-5" key={index}>
                               <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-                              <h4 className="font-bold text-large">{ capitalizeString(item.name) } { capitalizeString(item.lastname)}</h4>
+                              <h4 className="font-bold text-large">{ capitalizeString(item.name) }&nbsp;{ capitalizeString(item.lastname)}</h4>
                                 <div className="flex gap-5 mt-3">
                                   <div>
                                     <p className="text-tiny uppercase font-bold">iglesia</p>
@@ -265,6 +265,28 @@ export const Dashboard = () => {
 
                   </Tab>
                   <Tab title={`${arrVoices?.length} - Voces`}>
+
+                    {/* <div className="flex gap-3 flex-wrap mt-5">
+                      <Button variant="bordered" className="grow">
+                        Todas <span className="rounded-full text-xs p-1 font-bold">32</span>
+                      </Button> 
+                      <Button variant="bordered" className="grow">
+                        Soprano <span className="rounded-full text-xs p-1 font-bold">32</span>
+                      </Button> 
+                      <Button variant="bordered" className="grow">
+                        Contralto <span className="rounded-full text-xs p-1 font-bold">32</span>
+                      </Button> 
+                      <Button variant="bordered" className="grow">
+                        Tenor <span className="rounded-full text-xs p-1 font-bold">32</span>
+                      </Button>  
+                      <Button variant="bordered" className="grow">
+                        Barítono <span className="rounded-full text-xs p-1 font-bold">32</span>
+                      </Button> 
+                      <Button variant="bordered" className="grow">
+                        Bajo <span className="rounded-full text-xs p-1 font-bold">32</span>
+                      </Button> 
+                    </div> */}
+
                     <div className="flex justify-end">
                       <Dropdown placement="bottom-end" className="dark text-white">
                         <DropdownTrigger>
@@ -315,7 +337,7 @@ export const Dashboard = () => {
                           return (
                             <Card className="py-4 mt-5" key={index}>
                               <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-                              <h4 className="font-bold text-large">{ capitalizeString(item.name) } { capitalizeString(item.lastname)}</h4>
+                              <h4 className="font-bold text-large">{ capitalizeString(item.name) }&nbsp;{ capitalizeString(item.lastname)}</h4>
                                 <div className="flex gap-5 mt-3">
                                   <div>
                                     <p className="text-tiny uppercase font-bold">iglesia</p>

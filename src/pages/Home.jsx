@@ -11,6 +11,7 @@ export const Home = () => {
   const { onInputChange, formState, setFormState } = useForm({})
   const [tabActive, setTabActive] = useState('assistent')
   const [adventist, setAdventist] = useState('adventist')
+  const [isLoading, setIsLoading] = useState(false)
 
 
   
@@ -38,10 +39,12 @@ export const Home = () => {
         church: churchs[formState.church]?.label || null,
       })
       console.log(res)
+      setIsLoading(true);
       if (res.status == 409) return alert('El correo ya está registrado')
       if (res.status == 201) {
         onClose()
         toast.success('Registro realizado satisfactoriamente')
+        setIsLoading(false);
         e.target.reset();
         for (let field of Object.keys(formState)) {
           setFormState({ [field]: '' })
@@ -69,6 +72,17 @@ export const Home = () => {
         return;
     } 
 
+    if (
+      !formState.phone.startsWith('0424') ||
+      !formState.phone.startsWith('0414') ||
+      !formState.phone.startsWith('0412') ||
+      !formState.phone.startsWith('0426') ||
+      !formState.phone.startsWith('0416')
+    ) {
+      toast.error('Debe registrar el código de la compañia telefónica: 0424, 0414...')
+      return;
+    }
+
     if (!formState.voice && !formState.instrument) {
       toast.error('Debe registrar un tipo de ejecución')
       return;
@@ -85,11 +99,13 @@ export const Home = () => {
         voice: formState.voice || null,
         instrument: formState.instrument || null
       })
+      setIsLoading(true);
       console.log(res)
       if (res.status == 409) return alert('El correo ya está registrado')
       if (res.status == 201) {
         onClose()
         toast.success('Registro realizado satisfactoriamente')
+        setIsLoading(false);
         e.target.reset();
         for (let field of Object.keys(formState)) {
           setFormState({ [field]: '' })
@@ -197,7 +213,7 @@ export const Home = () => {
                       </Tabs>
                     </div>
                       
-                    <Button color="primary" type="submit" className="w-full mt-4">
+                    <Button color="primary" type="submit" className="w-full mt-4" isLoading={ isLoading }>
                         Registrar
                     </Button>
 
@@ -282,7 +298,7 @@ export const Home = () => {
                       </div>
 
 
-                      <Button color="primary" type="submit" className="w-full mt-4">
+                      <Button color="primary" type="submit" className="w-full mt-4" isLoading={ isLoading }>
                         Registrar
                       </Button>
 
