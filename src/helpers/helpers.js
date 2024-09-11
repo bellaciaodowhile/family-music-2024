@@ -3,7 +3,7 @@ const toCapitalize = (str) => {
 };
 
 const capitalizeString = (inputString) => {
-    const array = inputString.split(' ');
+    const array = inputString.trim().split(' ');
     const capitalizedArray = array.map(toCapitalize);
     return capitalizedArray.join(' '); 
 };
