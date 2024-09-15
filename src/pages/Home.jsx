@@ -34,7 +34,7 @@ export const Home = () => {
       const res = await client.from('personas').insert({
         name: formState.name.trim(),
         lastname: formState.lastname.trim(),
-        phone: formState.interested.trim() || formState.phone.trim(),
+        phone: formState.interested || formState.phone,
         adventist: getAdventist(adventist),
         church: churchs[formState.church]?.label || null,
       })
@@ -72,6 +72,17 @@ export const Home = () => {
         return;
     } 
 
+    // if (
+    //   !formState.phone.startsWith('0424') ||
+    //   !formState.phone.startsWith('0414') ||
+    //   !formState.phone.startsWith('0412') ||
+    //   !formState.phone.startsWith('0426') ||
+    //   !formState.phone.startsWith('0416')
+    // ) {
+    //   toast.error('Debe registrar el código de la compañia telefónica: 0424, 0414...')
+    //   return;
+    // }
+
     if (!formState.voice && !formState.instrument) {
       toast.error('Debe registrar un tipo de ejecución')
       return;
@@ -81,12 +92,12 @@ export const Home = () => {
       const res = await client.from('personas').insert({
         name: formState.name.trim(),
         lastname: formState.lastname.trim(),
-        phone: formState.phone.trim(),
+        phone: formState.phone,
         adventist: getAdventist(adventist),
         church: churchs[formState.church]?.label || null,
         participant: true,
         voice: formState.voice || null,
-        instrument: formState.instrument.trim() || null
+        instrument: formState.instrument || null
       })
       setIsLoading(true);
       console.log(res)
@@ -102,7 +113,7 @@ export const Home = () => {
       }
     } catch (error) {
       console.log(error)
-      toast.error(error)
+      toast.error('Ha ocurrido un error al registrarse')
     }
 
     console.log('Registrando participantes...')
@@ -237,6 +248,7 @@ export const Home = () => {
                           variant="underlined"
                           className="mt-2"
                           label="Número celular"
+                          placeholder="04121231234"
                           onChange={ onInputChange } 
                           name="phone" 
                           color="primary" />
