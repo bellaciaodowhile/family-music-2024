@@ -72,8 +72,6 @@ export const Home = () => {
         return;
     } 
 
-   
-
     if (!formState.voice && !formState.instrument) {
       toast.error('Debe registrar un tipo de ejecución')
       return;
