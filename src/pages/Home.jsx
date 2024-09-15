@@ -102,7 +102,7 @@ export const Home = () => {
       }
     } catch (error) {
       console.log(error)
-      toast.error('Ha ocurrido un error al registrarse')
+      toast.error(error)
     }
 
     console.log('Registrando participantes...')
