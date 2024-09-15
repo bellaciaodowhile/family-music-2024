@@ -7,7 +7,28 @@ const capitalizeString = (inputString) => {
     const capitalizedArray = array.map(toCapitalize);
     return capitalizedArray.join(' '); 
 };
+const months = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre"
+  ];
+
+function dateFormatt(dateStr) {
+    const [day, month, year] = dateStr.split('/').map(Number);
+    return `${day} de ${months[month - 1]} del 20${year}`;
+  }
+  
 
 export {
-    capitalizeString
+    capitalizeString,
+    dateFormatt
 }

@@ -32,9 +32,9 @@ export const Home = () => {
 
     try {
       const res = await client.from('personas').insert({
-        name: formState.name,
-        lastname: formState.lastname,
-        phone: formState.interested || formState.phone,
+        name: formState.name.trim(),
+        lastname: formState.lastname.trim(),
+        phone: formState.interested.trim() || formState.phone.trim(),
         adventist: getAdventist(adventist),
         church: churchs[formState.church]?.label || null,
       })
@@ -90,14 +90,14 @@ export const Home = () => {
 
     try {
       const res = await client.from('personas').insert({
-        name: formState.name,
-        lastname: formState.lastname,
-        phone: formState.phone,
+        name: formState.name.trim(),
+        lastname: formState.lastname.trim(),
+        phone: formState.phone.trim(),
         adventist: getAdventist(adventist),
         church: churchs[formState.church]?.label || null,
         participant: true,
         voice: formState.voice || null,
-        instrument: formState.instrument || null
+        instrument: formState.instrument.trim() || null
       })
       setIsLoading(true);
       console.log(res)
