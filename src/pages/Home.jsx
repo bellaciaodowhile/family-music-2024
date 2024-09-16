@@ -72,16 +72,26 @@ export const Home = () => {
         return;
     } 
 
-    // if (
-    //   !formState.phone.startsWith('0424') ||
-    //   !formState.phone.startsWith('0414') ||
-    //   !formState.phone.startsWith('0412') ||
-    //   !formState.phone.startsWith('0426') ||
-    //   !formState.phone.startsWith('0416')
-    // ) {
-    //   toast.error('Debe registrar el código de la compañia telefónica: 0424, 0414...')
-    //   return;
-    // }
+    if (
+      !formState.phone.startsWith('0424') &&
+      !formState.phone.startsWith('0414') &&
+      !formState.phone.startsWith('0412') &&
+      !formState.phone.startsWith('0426') &&
+      !formState.phone.startsWith('0416')
+    ) {
+      toast.error('Debe registrar el código de la compañia telefónica: 0424, 0414...')
+      return;
+    }
+
+    if (formState.phone.length > 11) {
+      toast.error('La longitud del número telefónico no debe ser mayor a 11 carácteres: 04XX1234123')
+      return;
+    }
+    
+    if (formState.phone.length < 11) {
+      toast.error('La longitud del número telefónico no debe ser menor a 11 carácteres: 04XX1234123')
+      return;
+    }
 
     if (!formState.voice && !formState.instrument) {
       toast.error('Debe registrar un tipo de ejecución')

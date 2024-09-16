@@ -21,7 +21,8 @@ export const Dashboard = () => {
   const [buttonActive, setButtonActive] = useState('all')
   const [dateEnsayo, setDateEnsayo] = useState()
   const [selectEnsayo, setSelectEnsayo] = useState()
-
+  const [dataAssistants, setDataAsisstants] = useState([])
+  
   const [isSelected, setIsSelected] = useState(false);
 
   const navigate = useNavigate();
@@ -63,6 +64,51 @@ export const Dashboard = () => {
           .then(data => {
             setEnsayos(data)
           })  
+
+
+          // Start
+
+          getData({}, 'ensayos')
+          .then(data => {
+            const ensayos = data; // Asegúrate de que esto sea un array de ensayos
+        
+            // Usamos Promise.all para esperar a que todas las promesas se resuelvan
+            return Promise.all(ensayos.map(ensayo => {
+              const asistencias = ensayo.asistentes ? ensayo.asistentes.split(',').filter(x => x.trim() !== '') : [];
+              const inasistencias = ensayo.inasistentes ? ensayo.inasistentes.split(',').filter(x => x.trim() !== '') : [];
+        
+              return getData({ participant: true })
+                .then(data => {
+                  const dataVoices = data.filter(item => !item.instrument);
+        
+                  // Filtrar las voces que están en asistencias
+                  const vocesAsistentes = dataVoices.filter(voice => asistencias.includes(String(voice.id)));
+        
+                  // Filtrar las voces que están en inasistencias
+                  const vocesInasistentes = dataVoices.filter(voice => inasistencias.includes(String(voice.id)));
+        
+                  return {
+                    ...ensayo, // Copia las propiedades del ensayo original
+                    asistentes: vocesAsistentes, // Agrega los asistentes filtrados
+                    inasistentes: vocesInasistentes // Agrega los inasistentes filtrados
+                  };
+                });
+            }));
+          })
+          .then(ensayosConAsistentes => {
+            setDataAsisstants(ensayosConAsistentes)
+            // console.log(ensayosConAsistentes); // Muestra el nuevo array de ensayos
+          })
+          .catch(error => {
+            console.error('Error al obtener los datos:', error);
+          });
+
+
+          // End
+
+
+
+
         }
       });
     };
@@ -74,6 +120,40 @@ export const Dashboard = () => {
     .then(data => {
       setEnsayos(data)
     })  
+    getData({}, 'ensayos')
+    .then(data => {
+      const ensayos = data; // Asegúrate de que esto sea un array de ensayos
+  
+      // Usamos Promise.all para esperar a que todas las promesas se resuelvan
+      return Promise.all(ensayos.map(ensayo => {
+        const asistencias = ensayo.asistentes ? ensayo.asistentes.split(',').filter(x => x.trim() !== '') : [];
+        const inasistencias = ensayo.inasistentes ? ensayo.inasistentes.split(',').filter(x => x.trim() !== '') : [];
+  
+        return getData({ participant: true })
+          .then(data => {
+            const dataVoices = data.filter(item => !item.instrument);
+  
+            // Filtrar las voces que están en asistencias
+            const vocesAsistentes = dataVoices.filter(voice => asistencias.includes(String(voice.id)));
+  
+            // Filtrar las voces que están en inasistencias
+            const vocesInasistentes = dataVoices.filter(voice => inasistencias.includes(String(voice.id)));
+  
+            return {
+              ...ensayo, // Copia las propiedades del ensayo original
+              asistentes: vocesAsistentes, // Agrega los asistentes filtrados
+              inasistentes: vocesInasistentes // Agrega los inasistentes filtrados
+            };
+          });
+      }));
+    })
+    .then(ensayosConAsistentes => {
+      setDataAsisstants(ensayosConAsistentes)
+      // console.log(ensayosConAsistentes); // Muestra el nuevo array de ensayos
+    })
+    .catch(error => {
+      console.error('Error al obtener los datos:', error);
+    });
   }
 
 
@@ -136,18 +216,39 @@ export const Dashboard = () => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredVoices = arrVoices?.filter(item => {
-    const fullName = `${item.name} ${item.lastname}`.toLowerCase();
-    const church = item.church.toLowerCase();
-    const voiceLabel = voices[item.voice]?.label.toLowerCase(); // Asegúrate de que voices[item.voice] exista
-  
-    return (
-      fullName.includes(searchTerm.toLowerCase()) ||
-      church.includes(searchTerm.toLowerCase()) ||
-      (voiceLabel && voiceLabel.includes(searchTerm.toLowerCase()))
-    );
+
+
+function obtenerInasistenciasPorId(userId) {
+  const inasistencias = [];
+
+  // Recorremos los eventos
+  dataAssistants.forEach(event => {
+      event.inasistentes.forEach(inasistente => {
+          if (inasistente.id === userId) {
+              inasistencias.push(event.date); // Suponiendo que 'fecha' es la propiedad que contiene la fecha del evento
+          }
+      });
   });
 
+  return inasistencias;
+}
+
+const filteredVoices = arrVoices?.filter(item => {
+  const fullName = `${item.name} ${item.lastname}`.toLowerCase();
+  const church = item.church.toLowerCase();
+  const voiceLabel = voices[item.voice]?.label.toLowerCase(); // Asegúrate de que voices[item.voice] exista
+
+  return (
+    fullName.includes(searchTerm.toLowerCase()) ||
+    church.includes(searchTerm.toLowerCase()) ||
+    (voiceLabel && voiceLabel.includes(searchTerm.toLowerCase()))
+  );
+}).map(item => {
+  return {
+    ...item, // Copia todas las propiedades existentes
+    inasistencias: obtenerInasistenciasPorId(item.id) // Añade la nueva propiedad
+  };
+});
 
   const handleInputEnsayo = (e) => {
     const date = new Date(e.year, e.month - 1, e.day); // Recuerda que los meses en JavaScript son indexados desde 0
@@ -200,8 +301,8 @@ export const Dashboard = () => {
     const arrAsistentes = getAsistentes?.split(',');
     const arrInasistentes = getInasistentes?.split(',');
 
-    const currentInasistentes = arrInasistentes.filter(x => x != person).join(',')
-    const currentAsistentes = arrAsistentes.filter(x => x != person).join(',')
+    const currentInasistentes = arrInasistentes?.filter(x => x != person).join(',')
+    const currentAsistentes = arrAsistentes?.filter(x => x != person).join(',')
 
     if (arrAsistentes?.includes(person.toString())) return toast.error(`Ya esta persona está asistente en el ensayo de ${currentEnsayo}`)
     if (arrInasistentes?.includes(person.toString())) {
@@ -264,8 +365,8 @@ export const Dashboard = () => {
     const arrAsistentes = getAsistentes?.split(',');
     const arrInasistentes = getInasistentes?.split(',');
 
-    const currentInasistentes = arrInasistentes.filter(x => x != person).join(',')
-    const currentAsistentes = arrAsistentes.filter(x => x != person).join(',')    
+    const currentInasistentes = arrInasistentes?.filter(x => x != person).join(',')
+    const currentAsistentes = arrAsistentes?.filter(x => x != person).join(',')    
 
     if (arrInasistentes?.includes(person.toString())) return toast.error(`Ya esta persona está inasistente en el ensayo de ${currentEnsayo}`)
     if (arrAsistentes?.includes(person.toString())) {
@@ -317,35 +418,30 @@ export const Dashboard = () => {
     }
   }
 
-  const getPeople = (idEnsayo) => {
-    const asistentes = ensayos[idEnsayo]?.asistentes
-    // if (asistentes) {
-    //   // console.log(asistentes)
-    //   const arrAsistentes = asistentes.split(',');
-
-    //   const asistentesFiltrados = arrAsistentes.flatMap(x => 
-    //     voices?.filter(person => person.id == x) || [] // Filtramos y aseguramos que no sea undefined
-    //   );
-    //   console.log(asistentesFiltrados)
-    //   return asistentesFiltrados
-    // }
-  }
-
 
   
 
+  const getAssistants = (asistentes) => {
+    if (asistentes) {
+      const arrAsistentes = asistentes.split(',').filter(x => x.trim() !== '');
+      const filteredAsistentes = arrVoices?.filter(voice => {
+        return arrAsistentes.includes(String(voice.id));
+      });
+      // console.log(filteredAsistentes)
+      return filteredAsistentes;
+    }
+    return [];
+  }
 
   return (
     <>
        <div className="bg-main min-h-screen">
           <div className="px-5 md:px-32 pt-10">
           <Link 
-          to={ '/' }
-          className="text-white ">
-            { '< Volver al inicio' }
+            to={ '/' }
+            className="text-white ">
+              { '< Volver al inicio' }
           </Link>
-
-
           <Tabs fullWidth color="primary" className="mt-10">
             <Tab title="Registros">
               <Tabs className="bg-none" color="primary" fullWidth>
@@ -454,52 +550,8 @@ export const Dashboard = () => {
                   onValueChange={setIsSelected}>
                     Modo asistencia
                   </Switch>
-
-                  
-
-
                     <Tabs fullWidth color="primary" className="mt-3">
                       <Tab title={`${instruments?.length} - Instrumentos`}>
-                        {/* <Table color="primary" aria-label="Example static collection table">
-                          <TableHeader>
-                            <TableColumn>Nombre(s) y Apellido(s)</TableColumn>
-                            <TableColumn>N° Celular</TableColumn>
-                            <TableColumn>Iglesia</TableColumn>
-                            <TableColumn>Instrumento</TableColumn>
-                          </TableHeader>
-                          <TableBody emptyContent="No existen registros en esta sección">
-                            {
-                            instruments && (
-                              instruments.map((item, index) => {
-                                return (
-                                  <TableRow key={ index }>
-                                    <TableCell>{ capitalizeString(item.name) } { capitalizeString(item.lastname) }</TableCell>
-                                    <TableCell>
-                                      <Dropdown placement="bottom-start" className="dark text-white">
-                                        <DropdownTrigger>
-                                          <Button variant="bordered">{ item.phone }</Button>
-                                        </DropdownTrigger>
-                                        <DropdownMenu aria-label="Static Actions">
-                                          <DropdownItem key="12">Copiar número</DropdownItem>
-                                          <DropdownItem href={`https://wa.me/+58${ item.phone }`} target="_blank" key="123">WhatsApp</DropdownItem>
-                                          <DropdownItem href={`tel:+58${ item.phone }`} target="_blank" key="24">Llamar</DropdownItem>
-                                          <DropdownItem href={`sms:+58${ item.phone }`} target="_blank" key="34">Mensaje de texto</DropdownItem>
-                                        </DropdownMenu>
-                                      </Dropdown>
-                                    </TableCell>
-                                    <TableCell>{ item.church }</TableCell>
-                                    <TableCell>{ item.instrument }</TableCell>
-                                  </TableRow>
-                                )
-                              })
-                            )
-                            }
-                          
-                          </TableBody>
-                        </Table> */}
-
-
-
                         {
                           instruments?.length > 0 ?
                             instruments.map((item, index) => {
@@ -534,15 +586,8 @@ export const Dashboard = () => {
                             })
                           : 'No hay registros en esta sección'
                         }
-
-
-
-
-
                       </Tab>
                       <Tab title={`${arrVoices?.length} - Voces`}>
-
-
                         <Input 
                           type="text" 
                           label="Buscar" 
@@ -551,10 +596,6 @@ export const Dashboard = () => {
                           className="mt-2"
                           size="sm"
                         />
-
-
-
-
                         <div className="flex gap-3 flex-wrap mt-5">
                           {[{ label: 'Todas' }, ...voices].map((voice, index) => (
                             <Button key={!index ? 'all' : (index - 1)} variant="bordered" className={[`grow`, 'border-3', buttonActive == (!index ? 'all' : (index - 1)) ? 'border-blue-500' : 'border' ]} onClick={() => handleSelectionChange(!index ? 'all' : (index - 1))}>
@@ -562,7 +603,6 @@ export const Dashboard = () => {
                                 { countVoices[index] }
                               </span>
                             </Button>
-                            // <DropdownItem key={!index ? 'all' : (index - 1)}>{ voice.label }</DropdownItem>
                           ))}
                         </div>
 
@@ -580,50 +620,6 @@ export const Dashboard = () => {
                             ))
                           }
                         </Select>
-
-                        {/* <div className="flex justify-end">
-                          <Dropdown placement="bottom-end" className="dark text-white">
-                            <DropdownTrigger>
-                              <Button variant="bordered">Seleccione la voz:</Button>
-                            </DropdownTrigger>
-                            <DropdownMenu aria-label="Voices" onAction={(key) => handleSelectionChange(key)}>
-                              {[{ label: 'Todas' }, ...voices].map((voice, index) => (
-                                  <DropdownItem key={!index ? 'all' : (index - 1)}>{ voice.label }</DropdownItem>
-                              ))}
-                            </DropdownMenu>
-                          </Dropdown>
-                        </div> */}
-
-                        {/* <Table color="primary" aria-label="Example static collection table" className="mt-3">
-                          <TableHeader>
-                            <TableColumn>Nombre(s) y Apellido(s)</TableColumn>
-                            <TableColumn>N° Celular</TableColumn>
-                            <TableColumn>Iglesia</TableColumn>
-                            <TableColumn>Voz</TableColumn>
-                          </TableHeader>
-                          <TableBody items={arrVoices} emptyContent={'No existen datos registrados en esta sección'}>
-                            {(item) => (
-                              <TableRow key={item.key}>
-                                <TableCell>{ item.name } { item.lastname }</TableCell>
-                                <TableCell>
-                                  <Dropdown placement="bottom-start" className="dark text-white">
-                                    <DropdownTrigger>
-                                      <Button variant="bordered">{ item.phone }</Button>
-                                    </DropdownTrigger>
-                                    <DropdownMenu aria-label="Static Actions">
-                                      <DropdownItem key="copy_number">Copiar número</DropdownItem>
-                                      <DropdownItem href={`https://wa.me/+58${ item.phone }`} target="_blank" key="whatsapp">WhatsApp</DropdownItem>
-                                      <DropdownItem href={`tel:+58${ item.phone }`} target="_blank" key="call">Llamar</DropdownItem>
-                                      <DropdownItem href={`sms:+58${ item.phone }`} target="_blank" key="msg_text">Mensaje de texto</DropdownItem>
-                                    </DropdownMenu>
-                                  </Dropdown>
-                                </TableCell>
-                                <TableCell>{ item.church }</TableCell>
-                                <TableCell>{ voices[item.voice].label }</TableCell>
-                              </TableRow>
-                            )}
-                          </TableBody> 
-                        </Table> */}
 
                         {
                           filteredVoices?.length > 0 ?
@@ -670,8 +666,11 @@ export const Dashboard = () => {
                                       </Button>
                                     </div>
                                     <div className={`${!isSelected ? 'flex' : 'hidden'} gap-4 mt-4 w-full`}>
-                                      <div className="w-3 h-3 rounded-full bg-red-500 shadow-xl"></div>
-                                      <div className="w-3 h-3 rounded-full bg-red-500 shadow-xl"></div>
+                                      {
+                                        Array.from({ length: item.inasistencias.length }, (_, i) => (
+                                          <div key={i} className="py-1 px-2 text-xs rounded-full bg-red-500 shadow-xl">{item.inasistencias[i]}</div>
+                                        ))
+                                      }
                                     </div>
                                   </CardHeader>
                                 </Card>
@@ -679,8 +678,6 @@ export const Dashboard = () => {
                             })
                           : 'No hay registros en esta sección'
                         }
-
-
                       </Tab>
                     </Tabs>
                 </Tab>
@@ -699,17 +696,18 @@ export const Dashboard = () => {
                 </Button>
               </div>
               <Accordion variant="shadow" className="mt-5">
-                {ensayos?.map((ensayo, index) => (
+                {dataAssistants?.map((ensayo, index) => (
                   <AccordionItem key={ index } aria-label={ dateFormatt(ensayo.date) } title={ dateFormatt(ensayo.date) }>
 
+                    <h4 className="text-md text-blue-500 font-bold">Asistentes ({ensayo.asistentes?.length}):</h4>
+                    {ensayo.asistentes.map((item, index) => (
+                      <div key={index} className="pl-3">{item.name} {item.lastname} - <span className="text-sm font-bold capitalize">{item.church}</span></div>
+                    ))}
 
-
-                   {
-                    getPeople(ensayo.id)?.map(item =>{
-                      {item}
-                    })
-                   }
-
+                    <h4 className="text-md text-red-500 font-bold mt-5">Inasistentes ({ensayo.inasistentes?.length}):</h4>
+                    {ensayo.inasistentes.map((item, index) => (
+                      <div key={index} className="pl-3">{item.name} {item.lastname} - <span className="text-sm font-bold capitalize">{item.church}</span></div>
+                    ))}
 
                   </AccordionItem>
                 ))}
