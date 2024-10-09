@@ -427,10 +427,21 @@ const filteredVoices = arrVoices?.filter(item => {
       const filteredAsistentes = arrVoices?.filter(voice => {
         return arrAsistentes.includes(String(voice.id));
       });
-      // console.log(filteredAsistentes)
       return filteredAsistentes;
     }
     return [];
+  }
+
+
+  const deleteRow = async ({ id, fullname }) => {
+    if (confirm(`¿Está seguro que desea eliminar a ${ fullname }? No podrá revertir esta acción.`)) {
+      const { data, error } = await client
+      .from('personas')
+      .delete()
+      .match({ id })
+      if (!error) { toast.success('Operación exitosa!') }
+      if (error) toast.error('Ha ocurrido un error...')
+    }
   }
 
   return (
@@ -638,17 +649,27 @@ const filteredVoices = arrVoices?.filter(item => {
                                         <small className="text-default-500">{ voices[item.voice].label }</small>
                                       </div>
                                     </div>
+                                    <div className="flex gap-3">
                                     <Dropdown placement="bottom-start" className="dark text-white">
-                                      <DropdownTrigger>
-                                        <Button variant="bordered" className="mt-3">{ item.phone }</Button>
-                                      </DropdownTrigger>
-                                      <DropdownMenu aria-label="Static Actions">
-                                        <DropdownItem key="12" onClick={() => copyClipboard(item.phone)}>Copiar número</DropdownItem>
-                                        <DropdownItem href={`https://wa.me/+58${ item.phone }`} target="_blank" key="123">WhatsApp</DropdownItem>
-                                        <DropdownItem href={`tel:+58${ item.phone }`} target="_blank" key="24">Llamar</DropdownItem>
-                                        <DropdownItem href={`sms:+58${ item.phone }`} target="_blank" key="34">Mensaje de texto</DropdownItem>
-                                      </DropdownMenu>
-                                    </Dropdown>
+                                        <DropdownTrigger>
+                                          <Button variant="bordered" className="mt-3">{ item.phone }</Button>
+                                        </DropdownTrigger>
+                                        <DropdownMenu aria-label="Static Actions">
+                                          <DropdownItem key="12" onClick={() => copyClipboard(item.phone)}>Copiar número</DropdownItem>
+                                          <DropdownItem href={`https://wa.me/+58${ item.phone }`} target="_blank" key="123">WhatsApp</DropdownItem>
+                                          <DropdownItem href={`tel:+58${ item.phone }`} target="_blank" key="24">Llamar</DropdownItem>
+                                          <DropdownItem href={`sms:+58${ item.phone }`} target="_blank" key="34">Mensaje de texto</DropdownItem>
+                                        </DropdownMenu>
+                                      </Dropdown>
+                                      <Dropdown placement="bottom-start" className="dark text-white">
+                                        <DropdownTrigger>
+                                          <Button variant="bordered" className="mt-3">Opciones</Button>
+                                        </DropdownTrigger>
+                                        <DropdownMenu aria-label="Static Actions">
+                                          <DropdownItem key="del" onClick={ ()=> deleteRow({id: item.id, fullname: capitalizeString(item.name) + ' ' + capitalizeString(item.lastname)}) } className="bg-red-700">Eliminar</DropdownItem>
+                                        </DropdownMenu>
+                                      </Dropdown>
+                                    </div>
                                     <div className={`${isSelected ? 'flex' : 'hidden'} gap-4 mt-4 w-full`}>
                                       <Button 
                                       className="grow" 
