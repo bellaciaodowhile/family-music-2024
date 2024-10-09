@@ -418,9 +418,6 @@ const filteredVoices = arrVoices?.filter(item => {
     }
   }
 
-
-  
-
   const getAssistants = (asistentes) => {
     if (asistentes) {
       const arrAsistentes = asistentes.split(',').filter(x => x.trim() !== '');
@@ -432,7 +429,6 @@ const filteredVoices = arrVoices?.filter(item => {
     return [];
   }
 
-
   const deleteRow = async ({ id, fullname }) => {
     if (confirm(`¿Está seguro que desea eliminar a ${ fullname }? No podrá revertir esta acción.`)) {
       const { data, error } = await client
@@ -441,8 +437,12 @@ const filteredVoices = arrVoices?.filter(item => {
       .match({ id })
       if (!error) { toast.success('Operación exitosa!') }
       if (error) toast.error('Ha ocurrido un error...')
+      setArrVoices(arrVoices?.filter(x => x.id !== id ));
     }
   }
+
+
+  
 
   return (
     <>

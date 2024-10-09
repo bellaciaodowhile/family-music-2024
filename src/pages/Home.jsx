@@ -38,7 +38,6 @@ export const Home = () => {
         adventist: getAdventist(adventist),
         church: churchs[formState.church]?.label || null,
       })
-      console.log(res)
       setIsLoading(true);
       if (res.status == 409) return alert('El correo ya está registrado')
       if (res.status == 201) {
@@ -51,7 +50,6 @@ export const Home = () => {
         }
       }
     } catch (error) {
-      console.log(error)
       toast.error('Ha ocurrido un error al registrarse')
     }
 
@@ -110,7 +108,6 @@ export const Home = () => {
         instrument: formState.instrument || null
       })
       setIsLoading(true);
-      console.log(res)
       if (res.status == 409) return alert('El correo ya está registrado')
       if (res.status == 201) {
         onClose()
@@ -122,19 +119,9 @@ export const Home = () => {
         }
       }
     } catch (error) {
-      console.log(error)
       toast.error('Ha ocurrido un error al registrarse')
     }
 
-    console.log('Registrando participantes...')
-    console.log({
-      nombre: formState.name,
-      apellido: formState.lastname,
-      celular: formState.phone,
-      iglesia: churchs[formState.church]?.label,
-      voz: formState.voice && voices[formState.voice]?.label || null, 
-      instrument: formState.instrument || null
-    })
     
   }
   
